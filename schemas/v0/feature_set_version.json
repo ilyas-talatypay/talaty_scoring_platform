@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FeatureSetVersion",
+  "type": "object",
+  "required": ["id", "feature_set_id", "version"],
+  "properties": {
+    "id": {"type": "string", "format": "uuid"},
+    "feature_set_id": {"type": "string", "format": "uuid"},
+    "version": {"type": "string"},
+    "created_at": {"type": ["string", "null"], "format": "date-time"},
+    "created_by": {"type": ["string", "null"]},
+    "features": {
+      "type": ["array", "null"],
+      "items": {"type": "string"}
+    },
+    "definition_query": {"type": ["string", "null"]}
+  },
+  "additionalProperties": false
+}

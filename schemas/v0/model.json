@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Model",
+  "type": "object",
+  "required": ["id", "name", "produced_from_run_id", "registry_state"],
+  "properties": {
+    "id": {"type": "string", "format": "uuid"},
+    "name": {"type": "string"},
+    "produced_from_run_id": {"type": "string", "format": "uuid"},
+    "registry_state": {
+      "type": "string",
+      "enum": ["draft", "registered", "deprecated"]
+    },
+    "created_at": {"type": ["string", "null"], "format": "date-time"}
+  },
+  "additionalProperties": false
+}

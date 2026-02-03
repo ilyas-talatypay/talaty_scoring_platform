@@ -1,0 +1,125 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Talaty Scoring API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "responses": {"200": {"description": "OK"}}
+      }
+    },
+    "/version": {
+      "get": {
+        "summary": "Version",
+        "responses": {"200": {"description": "OK"}}
+      }
+    },
+    "/schemas/v0": {
+      "get": {
+        "summary": "Schema bundle",
+        "responses": {"200": {"description": "OK"}}
+      }
+    },
+    "/schemas/v0/{name}": {
+      "get": {
+        "summary": "Schema by name",
+        "parameters": [
+          {"name": "name", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {"200": {"description": "OK"}}
+      }
+    },
+    "/datasets": {
+      "get": {"summary": "List datasets", "responses": {"200": {"description": "OK"}}},
+      "post": {"summary": "Create dataset", "responses": {"200": {"description": "OK"}}}
+    },
+    "/datasets/{dataset_id}": {
+      "get": {
+        "summary": "Get dataset",
+        "parameters": [
+          {
+            "name": "dataset_id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string", "format": "uuid"}
+          }
+        ],
+        "responses": {"200": {"description": "OK"}}
+      }
+    },
+    "/datasets/{dataset_id}/versions": {
+      "get": {
+        "summary": "List dataset versions",
+        "parameters": [
+          {
+            "name": "dataset_id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string", "format": "uuid"}
+          }
+        ],
+        "responses": {"200": {"description": "OK"}}
+      },
+      "post": {
+        "summary": "Create dataset version",
+        "parameters": [
+          {
+            "name": "dataset_id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string", "format": "uuid"}
+          }
+        ],
+        "responses": {"200": {"description": "OK"}}
+      }
+    },
+    "/features": {
+      "get": {"summary": "List features", "responses": {"200": {"description": "OK"}}},
+      "post": {"summary": "Create feature", "responses": {"200": {"description": "OK"}}}
+    },
+    "/feature-sets": {
+      "get": {"summary": "List feature sets", "responses": {"200": {"description": "OK"}}},
+      "post": {"summary": "Create feature set", "responses": {"200": {"description": "OK"}}}
+    },
+    "/feature-sets/{feature_set_id}/versions": {
+      "get": {
+        "summary": "List feature set versions",
+        "parameters": [
+          {
+            "name": "feature_set_id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string", "format": "uuid"}
+          }
+        ],
+        "responses": {"200": {"description": "OK"}}
+      },
+      "post": {
+        "summary": "Create feature set version",
+        "parameters": [
+          {
+            "name": "feature_set_id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string", "format": "uuid"}
+          }
+        ],
+        "responses": {"200": {"description": "OK"}}
+      }
+    },
+    "/run-specs": {
+      "get": {"summary": "List run specs", "responses": {"200": {"description": "OK"}}},
+      "post": {"summary": "Create run spec", "responses": {"200": {"description": "OK"}}}
+    },
+    "/runs": {
+      "get": {"summary": "List runs", "responses": {"200": {"description": "OK"}}},
+      "post": {"summary": "Create run", "responses": {"200": {"description": "OK"}}}
+    },
+    "/runs/execute": {
+      "post": {"summary": "Execute run", "responses": {"200": {"description": "OK"}}}
+    }
+  }
+}

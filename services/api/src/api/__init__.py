@@ -1,0 +1,2 @@
+"""Talaty API service."""
+

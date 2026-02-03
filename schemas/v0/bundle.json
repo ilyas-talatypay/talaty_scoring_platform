@@ -1,0 +1,158 @@
+{
+  "version": "v0",
+  "schemas": {
+    "dataset": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "Dataset",
+      "type": "object",
+      "required": ["id", "name", "storage_uri", "status"],
+      "properties": {
+        "id": {"type": "string", "format": "uuid"},
+        "name": {"type": "string"},
+        "description": {"type": ["string", "null"]},
+        "storage_uri": {"type": "string"},
+        "schema_hash": {"type": ["string", "null"]},
+        "row_count": {"type": ["integer", "null"]},
+        "date_start": {"type": ["string", "null"], "format": "date"},
+        "date_end": {"type": ["string", "null"], "format": "date"},
+        "target_definition": {"type": ["string", "null"]},
+        "status": {
+          "type": "string",
+          "enum": ["draft", "ready", "deprecated"]
+        },
+        "created_at": {"type": ["string", "null"], "format": "date-time"},
+        "updated_at": {"type": ["string", "null"], "format": "date-time"}
+      },
+      "additionalProperties": false
+    },
+    "dataset_version": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "DatasetVersion",
+      "type": "object",
+      "required": ["id", "dataset_id", "version", "data_fingerprint"],
+      "properties": {
+        "id": {"type": "string", "format": "uuid"},
+        "dataset_id": {"type": "string", "format": "uuid"},
+        "version": {"type": "string"},
+        "created_at": {"type": ["string", "null"], "format": "date-time"},
+        "created_by": {"type": ["string", "null"]},
+        "data_fingerprint": {"type": "string"},
+        "statistics_summary": {"type": ["object", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "feature": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "Feature",
+      "type": "object",
+      "required": ["id", "name", "dtype", "origin"],
+      "properties": {
+        "id": {"type": "string", "format": "uuid"},
+        "name": {"type": "string"},
+        "dtype": {
+          "type": "string",
+          "enum": ["num", "cat", "bool", "date", "text"]
+        },
+        "origin": {
+          "type": "string",
+          "enum": ["bureau", "bank_stmt", "doc", "derived"]
+        },
+        "description": {"type": ["string", "null"]},
+        "monotonic_expectation": {"type": ["string", "null"]},
+        "pii_flag": {"type": ["boolean", "null"]},
+        "created_at": {"type": ["string", "null"], "format": "date-time"}
+      },
+      "additionalProperties": false
+    },
+    "feature_set": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "FeatureSet",
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {"type": "string", "format": "uuid"},
+        "name": {"type": "string"},
+        "description": {"type": ["string", "null"]},
+        "created_at": {"type": ["string", "null"], "format": "date-time"}
+      },
+      "additionalProperties": false
+    },
+    "feature_set_version": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "FeatureSetVersion",
+      "type": "object",
+      "required": ["id", "feature_set_id", "version"],
+      "properties": {
+        "id": {"type": "string", "format": "uuid"},
+        "feature_set_id": {"type": "string", "format": "uuid"},
+        "version": {"type": "string"},
+        "created_at": {"type": ["string", "null"], "format": "date-time"},
+        "created_by": {"type": ["string", "null"]},
+        "features": {
+          "type": ["array", "null"],
+          "items": {"type": "string"}
+        },
+        "definition_query": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "run_spec": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "RunSpec",
+      "type": "object",
+      "required": ["dataset_version_id", "feature_set_version_id", "model_family"],
+      "properties": {
+        "id": {"type": ["string", "null"], "format": "uuid"},
+        "dataset_version_id": {"type": "string", "format": "uuid"},
+        "feature_set_version_id": {"type": "string", "format": "uuid"},
+        "split_policy": {"type": "object"},
+        "model_family": {"type": "string"},
+        "model_params": {"type": "object"},
+        "evaluation_policy": {"type": "object"},
+        "artifact_policy": {"type": "object"},
+        "created_at": {"type": ["string", "null"], "format": "date-time"},
+        "created_by": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "run": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "Run",
+      "type": "object",
+      "required": ["id", "run_spec_id", "status"],
+      "properties": {
+        "id": {"type": "string", "format": "uuid"},
+        "run_spec_id": {"type": "string", "format": "uuid"},
+        "status": {
+          "type": "string",
+          "enum": ["queued", "running", "succeeded", "failed"]
+        },
+        "created_at": {"type": ["string", "null"], "format": "date-time"},
+        "started_at": {"type": ["string", "null"], "format": "date-time"},
+        "finished_at": {"type": ["string", "null"], "format": "date-time"},
+        "mlflow_run_id": {"type": ["string", "null"]},
+        "artifacts_uri": {"type": ["string", "null"]},
+        "failure_reason": {"type": ["string", "null"]},
+        "failure_trace_uri": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "model": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "Model",
+      "type": "object",
+      "required": ["id", "name", "produced_from_run_id", "registry_state"],
+      "properties": {
+        "id": {"type": "string", "format": "uuid"},
+        "name": {"type": "string"},
+        "produced_from_run_id": {"type": "string", "format": "uuid"},
+        "registry_state": {
+          "type": "string",
+          "enum": ["draft", "registered", "deprecated"]
+        },
+        "created_at": {"type": ["string", "null"], "format": "date-time"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RunSpec",
+  "type": "object",
+  "required": ["dataset_version_id", "feature_set_version_id", "model_family"],
+  "properties": {
+    "id": {"type": ["string", "null"], "format": "uuid"},
+    "dataset_version_id": {"type": "string", "format": "uuid"},
+    "feature_set_version_id": {"type": "string", "format": "uuid"},
+    "split_policy": {"type": "object"},
+    "model_family": {"type": "string"},
+    "model_params": {"type": "object"},
+    "evaluation_policy": {"type": "object"},
+    "artifact_policy": {"type": "object"},
+    "created_at": {"type": ["string", "null"], "format": "date-time"},
+    "created_by": {"type": ["string", "null"]}
+  },
+  "additionalProperties": false
+}

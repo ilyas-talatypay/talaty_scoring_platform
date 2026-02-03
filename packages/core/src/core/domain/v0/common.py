@@ -1,0 +1,6 @@
+from pydantic import BaseModel, ConfigDict
+
+
+class DomainBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True, extra="forbid")
+

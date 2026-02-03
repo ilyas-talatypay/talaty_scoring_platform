@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Feature",
+  "type": "object",
+  "required": ["id", "name", "dtype", "origin"],
+  "properties": {
+    "id": {"type": "string", "format": "uuid"},
+    "name": {"type": "string"},
+    "dtype": {
+      "type": "string",
+      "enum": ["num", "cat", "bool", "date", "text"]
+    },
+    "origin": {
+      "type": "string",
+      "enum": ["bureau", "bank_stmt", "doc", "derived"]
+    },
+    "description": {"type": ["string", "null"]},
+    "monotonic_expectation": {"type": ["string", "null"]},
+    "pii_flag": {"type": ["boolean", "null"]},
+    "created_at": {"type": ["string", "null"], "format": "date-time"}
+  },
+  "additionalProperties": false
+}

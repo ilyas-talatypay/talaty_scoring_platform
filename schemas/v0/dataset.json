@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Dataset",
+  "type": "object",
+  "required": ["id", "name", "storage_uri", "status"],
+  "properties": {
+    "id": {"type": "string", "format": "uuid"},
+    "name": {"type": "string"},
+    "description": {"type": ["string", "null"]},
+    "storage_uri": {"type": "string"},
+    "schema_hash": {"type": ["string", "null"]},
+    "row_count": {"type": ["integer", "null"]},
+    "date_start": {"type": ["string", "null"], "format": "date"},
+    "date_end": {"type": ["string", "null"], "format": "date"},
+    "target_definition": {"type": ["string", "null"]},
+    "status": {
+      "type": "string",
+      "enum": ["draft", "ready", "deprecated"]
+    },
+    "created_at": {"type": ["string", "null"], "format": "date-time"},
+    "updated_at": {"type": ["string", "null"], "format": "date-time"}
+  },
+  "additionalProperties": false
+}

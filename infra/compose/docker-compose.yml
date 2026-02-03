@@ -1,0 +1,120 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres:/docker-entrypoint-initdb.d
+
+  minio:
+    image: minio/minio:${MINIO_IMAGE_TAG:-latest}
+    env_file: .env
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+
+  minio-init:
+    image: minio/mc:${MINIO_MC_IMAGE_TAG:-latest}
+    depends_on:
+      - minio
+    env_file: .env
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set local ${S3_ENDPOINT} ${S3_ACCESS_KEY} ${S3_SECRET_KEY};
+      /usr/bin/mc mb -p local/${S3_BUCKET} || true;
+      /usr/bin/mc anonymous set download local/${S3_BUCKET} || true;
+      exit 0;
+      "
+
+  api:
+    build:
+      context: ../..
+      dockerfile: services/api/Dockerfile
+    env_file: .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+      S3_BUCKET: ${S3_BUCKET}
+      S3_REGION: ${S3_REGION}
+      RUNNER_URL: ${RUNNER_URL}
+      GIT_SHA: ${GIT_SHA}
+    depends_on:
+      - postgres
+      - minio
+    ports:
+      - "8000:8000"
+
+  runner:
+    build:
+      context: ../..
+      dockerfile: services/runner/Dockerfile
+    env_file: .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      RUN_WORKDIR: ${RUN_WORKDIR}
+      S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+      S3_BUCKET: ${S3_BUCKET}
+      S3_REGION: ${S3_REGION}
+      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
+      MLFLOW_S3_ENDPOINT_URL: ${MLFLOW_S3_ENDPOINT_URL}
+      AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${S3_SECRET_KEY}
+      GIT_SHA: ${GIT_SHA}
+      IMAGE_TAG: ${IMAGE_TAG}
+    depends_on:
+      - postgres
+      - minio
+    ports:
+      - "9002:9002"
+
+  web:
+    build:
+      context: ../..
+      dockerfile: services/web/Dockerfile
+    env_file: .env
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+    depends_on:
+      - api
+    ports:
+      - "5173:5173"
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.11.3
+    env_file: .env
+    environment:
+      MLFLOW_S3_ENDPOINT_URL: ${MLFLOW_S3_ENDPOINT_URL}
+      AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${S3_SECRET_KEY}
+    depends_on:
+      - postgres
+      - minio
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri ${MLFLOW_BACKEND_STORE_URI}
+      --artifacts-destination ${MLFLOW_ARTIFACT_ROOT}
+    ports:
+      - "5000:5000"
+
+volumes:
+  postgres-data:
+  minio-data:
+

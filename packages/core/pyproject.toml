@@ -1,0 +1,23 @@
+[project]
+name = "talaty-core"
+version = "0.1.0"
+description = "Shared domain models and storage abstractions for Talaty Scoring Platform."
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.6,<3",
+  "boto3>=1.34,<2",
+]
+
+[project.scripts]
+talaty-export-schemas = "core.schema_export:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
